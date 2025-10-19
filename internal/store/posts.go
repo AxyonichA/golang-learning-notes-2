@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
 
 	"github.com/lib/pq"
 )
@@ -34,7 +33,7 @@ func (s *PostStore) Create(ctx context.Context, post *Post) error {
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
-	
+
 	err := s.db.QueryRowContext(
 		ctx, 
 		query, 

@@ -14,3 +14,7 @@ migrate-up:
 .PHONY: migrate-down
 migrate-down: 
 	@migrate -verbose -source="${MIGRATIONS_PATH}" -database="postgres://postgres:postgres@localhost:5434/go-social?sslmode=disable" down $(filter-out $@,$(MAKECMDGOALS))
+
+.PHONY: seed
+seed:
+	@go run cmd/migrate/seed/main.go
