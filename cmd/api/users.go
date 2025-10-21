@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"social/internal/store"
 	"strconv"
@@ -15,6 +14,17 @@ type userKey string
 
 const userCtx userKey = "user"
 
+// GetUser (doc stub)
+//
+//	@Summary		Fetches a user profile
+//	@Description	Fetches a user profile by ID
+//	@Tags			users
+//	@Accept			json
+//	@Produce		json
+//	@Param			userID	path		int	true	"User ID"
+//	@Success		200		{object}	store.User
+//	@Security		ApiKeyAuth
+//	@Router			/users/{userID} [get]
 func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	user := getUserFromContext(r)
 
@@ -39,7 +49,6 @@ func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request
 	ctx := r.Context()
 
 	if err := app.store.Followers.Follow(ctx, followerUser.ID, payload.UserID); err != nil {
-		fmt.Println(err)
 		switch err {
 		case store.ErrConflict:
 			app.conflictResponse(w, r, err)
