@@ -7,7 +7,7 @@ import (
 	"social/internal/store"
 )
 
-const version = "0.0.1"
+const version = "0.0.2"
 
 //	@title			GopherSocial
 //	@description	API for GopherSocial, a social network for Gophers
@@ -34,7 +34,8 @@ func main() {
 	}
 
 	cfg := config{
-		addr: env.GetString("ADDR", ":8080"),
+		addr:   env.GetString("ADDR", ":8080"),
+		apiURL: env.GetString("EXTERNAL_URL", "localhost:8080"),
 		db: dbConfig{
 			addr:         env.GetString("DB_ADDR", "postgres://postgres:postgres@localhost:5432/go-social?sslmode=disable"),
 			maxOpenConns: env.GetInt("DB_MAX_OPEN_CONNS", 30),
