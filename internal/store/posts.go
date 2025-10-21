@@ -9,22 +9,21 @@ import (
 )
 
 type Post struct {
-	ID 				int64 		`json:"id"`
-	Content 	string 		`json:"content"`
-	Title 		string 		`json:"title"`
-	UserID 		int64 		`json:"user_id"`
-	Tags 			[]string 	`json:"tags"`
-	CreatedAt string 		`json:"created_at"`
-	UpdatedAt string 		`json:"updated_at"`
+	ID        int64     `json:"id"`
+	Content   string    `json:"content"`
+	Title     string    `json:"title"`
+	UserID    int64     `json:"user_id"`
+	Tags      []string  `json:"tags"`
+	CreatedAt string    `json:"created_at"`
+	UpdatedAt string    `json:"updated_at"`
 	Version   int       `json:"version"`
-	Comments 	[]Comment `json:"comments"`
-	User 			User 			`json:"user"`
+	Comments  []Comment `json:"comments"`
+	User      User      `json:"user"`
 }
 
 type PostWithMetadata struct {
 	Post
 	CommentsCount int `json:"comments_count"`
-
 }
 
 type PostStore struct {
@@ -95,18 +94,18 @@ func (s *PostStore) Create(ctx context.Context, post *Post) error {
 	defer cancel()
 
 	err := s.db.QueryRowContext(
-		ctx, 
-		query, 
-		post.Content, 
-		post.Title, 
-		post.UserID, 
+		ctx,
+		query,
+		post.Content,
+		post.Title,
+		post.UserID,
 		pq.Array(post.Tags),
 	).Scan(
 		&post.ID,
 		&post.CreatedAt,
 		&post.UpdatedAt,
 	)
-	
+
 	if err != nil {
 		return err
 	}
@@ -132,9 +131,9 @@ func (s *PostStore) GetByID(ctx context.Context, id int64) (*Post, error) {
 		id,
 	).Scan(
 		&post.ID,
-		&post.UserID, 
-		&post.Title, 
-		&post.Content, 
+		&post.UserID,
+		&post.Title,
+		&post.Content,
 		&post.CreatedAt,
 		&post.UpdatedAt,
 		pq.Array(&post.Tags),
@@ -143,10 +142,10 @@ func (s *PostStore) GetByID(ctx context.Context, id int64) (*Post, error) {
 
 	if err != nil {
 		switch {
-			case errors.Is(err, sql.ErrNoRows):
-				return nil, ErrNotFound
-			default:
-				return nil, err
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrNotFound
+		default:
+			return nil, err
 		}
 	}
 
@@ -190,20 +189,20 @@ func (s *PostStore) Update(ctx context.Context, post *Post) error {
 	defer cancel()
 
 	err := s.db.QueryRowContext(
-		ctx, 
-		query, 
-		post.Title, 
-		post.Content, 
-		post.ID, 
+		ctx,
+		query,
+		post.Title,
+		post.Content,
+		post.ID,
 		post.Version,
 	).Scan(&post.Version)
 
 	if err != nil {
 		switch {
-			case errors.Is(err, sql.ErrNoRows):
-				return ErrNotFound
-			default:
-				return err
+		case errors.Is(err, sql.ErrNoRows):
+			return ErrNotFound
+		default:
+			return err
 		}
 	}
 

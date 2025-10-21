@@ -12,6 +12,7 @@ import (
 )
 
 type userKey string
+
 const userCtx userKey = "user"
 
 func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +26,7 @@ func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
 type FollowUser struct {
 	UserID int64 `json:"user_id"`
 }
+
 func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request) {
 	followerUser := getUserFromContext(r)
 
@@ -38,7 +40,7 @@ func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request
 
 	if err := app.store.Followers.Follow(ctx, followerUser.ID, payload.UserID); err != nil {
 		fmt.Println(err)
-		switch err { 
+		switch err {
 		case store.ErrConflict:
 			app.conflictResponse(w, r, err)
 			return

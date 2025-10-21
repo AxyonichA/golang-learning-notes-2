@@ -7,10 +7,10 @@ import (
 )
 
 type User struct {
-	ID int64 `json:"id"`
-	Username string `json:"username"`
-	Email string `json:"email"`
-	Password string `json:"-"`
+	ID        int64  `json:"id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Password  string `json:"-"`
 	CreatedAt string `json:"created_at"`
 }
 type UserStore struct {
@@ -26,7 +26,7 @@ func (s *UserStore) Create(ctx context.Context, user *User) error {
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeoutDuration)
 	defer cancel()
-	
+
 	err := s.db.QueryRowContext(
 		ctx,
 		query,

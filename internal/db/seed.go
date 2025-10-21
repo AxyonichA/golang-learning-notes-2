@@ -2,9 +2,9 @@ package db
 
 import (
 	"context"
-	"math/rand"
 	"fmt"
 	"log"
+	"math/rand"
 	"social/internal/store"
 )
 
@@ -71,7 +71,6 @@ var comments = []string{
 	"Thanks for the information, very useful.",
 }
 
-
 func Seed(store store.Storage) {
 	ctx := context.Background()
 
@@ -98,17 +97,17 @@ func Seed(store store.Storage) {
 			return
 		}
 	}
-	
+
 	log.Println("Seeding complete")
 }
 
 func generateUsers(num int) []*store.User {
-	users := make ([]*store.User, num)
+	users := make([]*store.User, num)
 
 	for i := 0; i < num; i++ {
 		users[i] = &store.User{
 			Username: usernames[i%len(usernames)] + fmt.Sprintf("%d", i),
-			Email:  usernames[i%len(usernames)] + fmt.Sprintf("%d", i) + "@example.com",
+			Email:    usernames[i%len(usernames)] + fmt.Sprintf("%d", i) + "@example.com",
 			Password: "123123",
 		}
 	}
@@ -117,15 +116,15 @@ func generateUsers(num int) []*store.User {
 }
 
 func generatePosts(num int, users []*store.User) []*store.Post {
-	posts := make ([]*store.Post, num)
+	posts := make([]*store.Post, num)
 
 	for i := 0; i < num; i++ {
 		user := users[rand.Intn(len(users))]
 
 		posts[i] = &store.Post{
-			UserID: user.ID,
+			UserID:  user.ID,
 			Content: contents[rand.Intn(len(contents))],
-			Title: titles[rand.Intn(len(titles))],
+			Title:   titles[rand.Intn(len(titles))],
 			Tags: []string{
 				tags[rand.Intn(len(titles))],
 				tags[rand.Intn(len(titles))],
@@ -137,15 +136,15 @@ func generatePosts(num int, users []*store.User) []*store.Post {
 }
 
 func generateComments(num int, users []*store.User, posts []*store.Post) []*store.Comment {
-	cms := make ([]*store.Comment, num)
+	cms := make([]*store.Comment, num)
 
 	for i := 0; i < num; i++ {
 		user := users[rand.Intn(len(users))]
 		post := posts[rand.Intn(len(posts))]
 
 		cms[i] = &store.Comment{
-			UserID: user.ID,
-			PostID: post.ID,
+			UserID:  user.ID,
+			PostID:  post.ID,
 			Content: comments[rand.Intn(len(comments))],
 		}
 	}

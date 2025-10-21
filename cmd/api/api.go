@@ -1,31 +1,36 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
-	"social/internal/store"
 	"time"
+
+	"social/internal/store"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	"github.com/AxyonichA/golang-learning-notes-2/docs" // This is required to generate swagger docs
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 type application struct {
 	config config
-	store store.Storage
+	store  store.Storage
 }
 
 type config struct {
 	addr string
-	db dbConfig
-	env string
+	db   dbConfig
+	env  string
 }
 
 type dbConfig struct {
-	addr string
+	addr         string
 	maxOpenConns int
 	maxIdleConns int
-	maxIdleTime string
+	maxIdleTime  string
 }
 
 func (app *application) mount() http.Handler {
@@ -40,11 +45,14 @@ func (app *application) mount() http.Handler {
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
 
+		docsURL := fmt.Sprintf("%s/swagger/doc.json", app.config.addr)
+		r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL(docsURL)))
+
 		r.Route("/posts", func(r chi.Router) {
 			r.Post("/", app.createPostHandler)
 			r.Route("/{postID}", func(r chi.Router) {
 				r.Use(app.postsContextMiddleware)
-				
+
 				r.Get("/", app.getPostHandler)
 				r.Delete("/", app.deletePostHandler)
 				r.Patch("/", app.updatePostHandler)
@@ -65,17 +73,18 @@ func (app *application) mount() http.Handler {
 
 	})
 
-
 	return r
 }
 
 func (app *application) run(mux http.Handler) error {
+	// Docs
+	docs.SwaggerInfo.Version = version
 	srv := &http.Server{
-		Addr: app.config.addr,
-		Handler: mux,
+		Addr:         app.config.addr,
+		Handler:      mux,
 		WriteTimeout: time.Second * 30,
-		ReadTimeout: time.Second * 10,
-		IdleTimeout: time.Minute,
+		ReadTimeout:  time.Second * 10,
+		IdleTimeout:  time.Minute,
 	}
 
 	log.Printf("server has started at %s", app.config.addr)
