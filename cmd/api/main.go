@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"social/internal/auth"
 	"social/internal/db"
 	"social/internal/env"
 	"social/internal/mailer"
@@ -58,6 +59,17 @@ func main() {
 				apiKey: env.GetString("MAILTRAP_API_KEY", ""),
 			},
 		},
+		auth: authConfig{
+			basic: basicConfig{
+				user: env.GetString("AUTH_BASIC_USER", "admin"),
+				pass: env.GetString("AUTH_BASIC_PASS", "admin"),
+			},
+			token: tokenConfig{
+				secret: env.GetString("AUTH_TOKEN_SECRET", "example"),
+				exp:    time.Hour * 24 * 3,
+				iss:    "gophersocial",
+			},
+		},
 	}
 
 	logger := zap.Must(zap.NewProduction()).Sugar()
@@ -84,11 +96,14 @@ func main() {
 		logger.Fatal(err)
 	}
 
+	jwtAuthenticator := auth.NewJWTAuthenticator(cfg.auth.token.secret, cfg.auth.token.iss, cfg.auth.token.iss)
+
 	app := &application{
-		config: cfg,
-		store:  store,
-		logger: logger,
-		mailer: mailer,
+		config:        cfg,
+		store:         store,
+		logger:        logger,
+		mailer:        mailer,
+		authenticator: jwtAuthenticator,
 	}
 
 	mux := app.mount()
