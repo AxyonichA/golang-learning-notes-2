@@ -6,6 +6,7 @@ import (
 	"social/internal/db"
 	"social/internal/env"
 	"social/internal/mailer"
+	"social/internal/ratelimiter"
 	"social/internal/store"
 	"social/internal/store/cache"
 	"time"
@@ -77,6 +78,11 @@ func main() {
 				exp:    time.Hour * 24 * 3,
 				iss:    "gophersocial",
 			},
+		},
+		rateLimiter: ratelimiter.Config{
+			RequestsPerTimeFrame: env.GetInt("RATELIMITER_REQUESTS_COUNT", 20),
+			TimeFrame: time.Second*5,
+			Enabled: env.GetBool("RATE_LIMITER_ENABLED", true),
 		},
 	}
 
