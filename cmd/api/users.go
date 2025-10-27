@@ -55,12 +55,12 @@ type FollowUser struct {
 
 func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request) {
 	followerUser := getUserFromContext(r)
-	followedID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)  
+	followedID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
 	if err != nil {
 		app.badRequestResponse(w, r, err)
 		return
 	}
-	
+
 	ctx := r.Context()
 
 	if err := app.store.Followers.Follow(ctx, followerUser.ID, followedID); err != nil {
@@ -81,7 +81,7 @@ func (app *application) followUserHandler(w http.ResponseWriter, r *http.Request
 func (app *application) unfollowUserHandler(w http.ResponseWriter, r *http.Request) {
 	followerUser := getUserFromContext(r)
 
-	unfollowedID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)  
+	unfollowedID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
 	if err != nil {
 		app.badRequestResponse(w, r, err)
 		return
